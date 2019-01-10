@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>登录</title>
+	<script src="js/jquery.js"></script>
+</head>
+<style>
+	*{
+		margin:0px;
+		padding:0px;
+	}
+
+	body,html{
+		font-size: 12px;
+		font-family: "Microsoft YaHei";
+		color:#333;
+	}
+
+	ul,li{
+		list-style: none;
+	}
+
+	a{
+		text-decoration: none;
+		color:#333;
+	}
+	.loginTitle{
+		font-size: 32px;
+		font-weight: 800;
+		margin:60px auto 10px;
+		text-align: center;
+	}
+
+	#container{
+		width: 480px;
+		margin:10px auto 60px;
+		border: 1px solid #eaeaea;
+		border-radius: 3px;
+	}
+
+	#container form{
+		padding: 36px 0px 66px;
+	}
+	
+	.form-div{
+		margin:30px 0px;
+		text-align: center;
+	}
+
+	.form-div label{
+		min-width:70px;
+		display: inline-block;
+		font-size: 18px;
+	}
+	
+	.form-div input{
+		font-size: 18px;
+		padding:9px 11px;
+		min-width: 220px;
+		border:1px solid #eaeaea;
+		color:#333;
+		outline: none;
+	}
+
+	#register,#login{
+		padding: 10px 20px;
+		font-size: 18px;
+		outline: none;
+		cursor: pointer;
+		border:none;
+		background:#eaeaea;
+		color:#333;
+	}
+
+	.form-btn{
+		text-align: center;
+	}
+
+	#alert{
+		position: fixed;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		padding:30px 50px;
+		color:#fff;
+		text-align: center;
+		border:1px solid #67743c;
+		z-index: 10001;
+		background:#3a99e5;
+		font-size: 18px;
+		display: none;
+	}
+</style>
+<body>
+	<h3 class="loginTitle">欢迎登录</h3>
+	<div id="container">
+		<form method="post">
+			<div class="form-div">
+				<label for="username">用户名</label>
+				<input type="text" name="username" value="" id="username" placeholder="请输入账号">
+			</div>
+			<div class="form-div">
+				<label for="password">密码</label>
+				<input type="password" name="password" value="" id="password" placeholder="请输入密码">
+			</div>
+			<div class="form-btn">
+				<input id="login" type="button" value="登录" onclick="yylogin()">
+				<a id="register" href="register.html">注册</a>
+			</div>
+		</form>
+	</div>
+	<div id="alert">
+		
+	</div>
+	<script>
+		function yylogin(){
+			var username = $("#username").val();
+			var pwd = $("#password").val();
+			if(username == '' || pwd == ''){
+					var nr = "输入框内容不能为空";
+					yyalert(nr);
+					return false;
+			}
+
+			var url="http://www.blog.io/blog/include/login.php";
+			$.ajax({
+				type:"post",
+				url:url,
+				data:{
+					username:username,
+					pwd:pwd
+				},
+				dataType:"json",
+				success:function(data){
+					// var data = JSON.parse(data);
+					if(data.success == 1){
+						alert(data.error_code);
+						window.location.href="index.php";
+					}else{
+						alert(data.error_code);
+						window.location.href="login.html";
+					}
+				}
+			});
+		}
+
+		// 报错提示框
+		function yyalert(nr){
+			$("#alert").text(nr);
+			$("#alert").fadeIn(500);
+			setTimeout(function(){
+				$("#alert").fadeOut();
+			},2000)
+		}		
+	</script>
+</body>
+</html>

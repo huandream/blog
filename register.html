@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>注册</title>
+	<script src="js/jquery.js"></script>
+</head>
+<style>
+	*{
+		margin:0px;
+		padding:0px;
+	}
+
+	body,html{
+		font-size: 12px;
+		font-family: "Microsoft YaHei";
+		color:#333;
+	}
+
+	ul,li{
+		list-style: none;
+	}
+
+	a{
+		text-decoration: none;
+		color:#333;
+	}
+	.loginTitle{
+		font-size: 32px;
+		font-weight: 800;
+		margin:60px auto 20px;
+		text-align: center;
+	}
+
+	#container{
+		width: 480px;
+		margin:10px auto 60px;
+		border: 1px solid #eaeaea;
+		border-radius: 3px;
+	}
+
+	#container form{
+		padding: 36px 0px 66px;
+	}
+	
+	.form-div{
+		margin:30px 0px;
+		text-align: center;
+	}
+
+	.form-div label{
+		min-width:70px;
+		display: inline-block;
+		font-size: 18px;
+	}
+	
+	.form-div input{
+		font-size: 18px;
+		padding:9px 11px;
+		min-width: 234px;
+		border:1px solid #eaeaea;
+		color:#333;
+		outline: none;
+	}
+
+	#register,#login,#reset{
+		padding: 10px 20px;
+		font-size: 18px;
+		outline: none;
+		cursor: pointer;
+		border:none;
+		background:#eaeaea;
+		color:#333;
+	}
+	
+	#code{
+		max-width: 110px;
+    	min-width: 80px;
+	}
+
+	.code{
+		width: 120px;
+		border: none;
+    	outline: none;
+    	color: #666;
+    	font-size: 18px;
+    	cursor: pointer;
+    	padding: 9px 0px;
+	}
+
+	.form-btn{
+		text-align: center;
+	}
+
+	#alert{
+		position: fixed;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		padding:30px 50px;
+		color:#fff;
+		text-align: center;
+		border:1px solid #67743c;
+		z-index: 10001;
+		background:#3a99e5;
+		font-size: 18px;
+		display: none;
+	}
+</style>
+<body>
+	<h3 class="loginTitle">欢迎注册</h3>
+	<div id="container">
+		<form action="" method="post">
+			<div class="form-div">
+				<label for="username">用户名</label>
+				<input name="username" type="text" value="" id="username" placeholder="请输入用户名">
+			</div>
+			<div class="form-div">
+				<label for="password">密码</label>
+				<input name="password" type="password" value="" id="password" placeholder="请输入密码">
+			</div>
+			<div class="form-div">
+				<label for="qrpassword">确认密码</label>
+				<input name="qrpassword" type="password" value="" id="qrpassword" placeholder="请输入密码">
+			</div>
+			<div class="form-div">
+				<label for="phone">手机号码</label>
+				<input name="phone" type="text" value="" id="phone" placeholder="请输入手机号码">
+			</div>
+			<div class="form-div">
+				<label for="code">验证码</label>
+				<input type="text" value="" id="code" placeholder="请输入验证码">
+				<button type="button" class="code" onclick="yycode('.code')">获取验证码</button>
+			</div>
+			<div class="form-btn">
+				<input id="register" type="button" value="注册" onclick="yyregister()">
+				<input id="reset" type="reset" value="重置">
+				<a id="login" href="login.html">已有账号？</a>
+			</div>
+		</form>
+	</div>
+	<div id="alert">
+		
+	</div>
+	<script>
+		$(function(){
+			yycode('.code');
+		});
+
+		function yyregister(){
+			var username = $("#username").val();
+			var pwd = $("#password").val();
+			var qrpwd = $("#qrpassword").val();
+			var phone = $("#phone").val();
+			var code = $("#code").val();
+			var hqcode = $(".code").val();
+			if(username == '' || pwd == '' || qrpwd == '' || phone == '' || code == ''){
+					var nr = "输入框内容不能为空";
+					yyalert(nr);
+					return false;
+			}
+			if(code != hqcode){
+				var nr = "验证码错误";
+				yyalert(nr);
+				return false;
+			}
+
+			var url="http://www.blog.io/blog/include/register.php";
+			$.ajax({
+				type:"post",
+				url:url,
+				data:{
+					username:username,
+					pwd:pwd,
+					phone:phone
+				},
+				dataType:"json",
+				success:function(data){
+					// var data = JSON.parse(data);
+					if(data.success == 1){
+						alert(data.error_code);
+						window.location.href="login.html";
+					}else{
+						alert(data.error_code);
+						window.location.href="register.html";
+					}
+				}
+			});
+		}
+
+		// 报错提示框
+		function yyalert(nr){
+			$("#alert").text(nr);
+			$("#alert").fadeIn(500);
+			setTimeout(function(){
+				$("#alert").fadeOut();
+			},2000)
+		}
+
+		function yycode(className){
+			var code="";
+			var cpdeNum ="";
+			for(let i =0;i <6;i++){
+				var s = colors()
+				var ran = String(parseInt(Math.random()*10));
+				var num = parseInt(Math.random()*6+16);
+				var span = "<span style='color:"+s+";font-size:"+num+"px'>"+ran+"</span>";
+				cpdeNum += ran;
+				code +=span;
+			}
+			$(className).val(cpdeNum);
+			$(className).html(code);
+
+			// 颜色随机函数
+			function colors(){
+				var color = "#";
+				var colorCode = ['a','b','c','d','e','f','1','2','3','4','5','6','7','8','9','0'];
+				var colorLength=colorCode.length;
+				for(let i = 0;i<6;i++){
+					var num = parseInt(Math.random()*colorLength);
+					color +=colorCode[num];
+				}
+				return color;
+			}
+		}
+
+		
+	</script>
+</body>
+</html>
